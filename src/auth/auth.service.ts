@@ -1,26 +1,74 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { RegisterDto } from './dto/register.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UserService } from 'src/user/user.service';
+import { Role } from 'src/user/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) { }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async register(userDto: RegisterDto) {
+    console.log(userDto.email);
+    const existingUser = await this.userService.findByEmail(userDto.email);
+    if (existingUser) {
+      console.log(userDto);
+      console.log(existingUser);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      //   throw new BadRequestException('Email already registered');
+      // }
+      // else {
+      console.log(userDto);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+      const hashedPassword = await bcrypt.hash(userDto.password, 12);
+      const user = await this.userService.create({
+        email: userDto.email,
+        password: hashedPassword,
+        role: Role.User,
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      let role = Role.User;
+
+      let accessToken = this.jwtService.sign(
+        {
+          id: user.id,
+          email: userDto.email,
+          role: role,
+        },
+        {
+          secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+          expiresIn: '15m',
+        },
+      );
+
+      let refreshToken = this.jwtService.sign(
+        {
+          id: user.id,
+          email: userDto.email,
+          role: role,
+        },
+        {
+          secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+          expiresIn: '7d',
+        },
+      );
+      return {
+        "id": 1,
+        user: {
+          id: user.id,
+          email: userDto.email
+        },
+        accessToken,
+        refreshToken,
+      };
+    };
   }
 }
+
+
