@@ -1,20 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtModule } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'prisma/prisma.service';
+
 @Injectable()
 export class UserService {
-  constructor(private jwtService: JwtService) { }
+  constructor(
+    private prisma: PrismaService,
+  ) { }
 
-  create(createUserDto: CreateUserDto) {
-    // TODO: Push to DB
-    let id = 1;
+  async create(createUserDto: CreateUserDto) {
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: createUserDto.email,
+      },
+    });
 
-    return {
-      id: id,
-    };
+    if (existingUser) {
+      return {
+        "id": existingUser.id,
+        "message": "User already exists"
+      }
+    }
+    else {
+      let db = await this.prisma.user.create({
+        data: {
+          email: createUserDto.email,
+          password: createUserDto.password,
+        },
+      });
 
+      let id = db.id;
+
+      return {
+        id: id,
+      };
+    }
   }
 
   findAll() {
@@ -22,7 +46,12 @@ export class UserService {
   }
 
   findByEmail(email: string) {
-    return `This action returns a user by email ${email}`;
+    let id = this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return id;
   }
 
   findOne(id: number) {

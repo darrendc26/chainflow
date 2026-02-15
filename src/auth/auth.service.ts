@@ -21,9 +21,12 @@ export class AuthService {
       console.log(userDto);
       console.log(existingUser);
 
-      //   throw new BadRequestException('Email already registered');
-      // }
-      // else {
+      return {
+        "id": existingUser.id,
+        "message": "User already exists"
+      }
+    }
+    else {
       console.log(userDto);
 
       const hashedPassword = await bcrypt.hash(userDto.password, 12);
@@ -59,7 +62,6 @@ export class AuthService {
         },
       );
       return {
-        "id": 1,
         user: {
           id: user.id,
           email: userDto.email
