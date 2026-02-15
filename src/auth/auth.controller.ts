@@ -9,8 +9,16 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() userDto: RegisterDto) {
-    console.log('RAW BODY:', userDto.email); // 👈 add this
-    console.log('RAW BODY:', userDto.password); // 👈 add this
     return this.authService.register(userDto);
+  }
+
+  @Post('login')
+  async login(@Body() userDto: RegisterDto) {
+    return this.authService.login(userDto);
+  }
+
+  @Post('update')
+  async update(@Body() updateAuthDto: UpdateAuthDto) {
+    return this.authService.update(updateAuthDto);
   }
 }

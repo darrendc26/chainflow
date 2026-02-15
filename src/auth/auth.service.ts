@@ -15,19 +15,14 @@ export class AuthService {
   ) { }
 
   async register(userDto: RegisterDto) {
-    console.log(userDto.email);
     const existingUser = await this.userService.findByEmail(userDto.email);
     if (existingUser) {
-      console.log(userDto);
-      console.log(existingUser);
-
       return {
         "id": existingUser.id,
         "message": "User already exists"
       }
     }
     else {
-      console.log(userDto);
 
       const hashedPassword = await bcrypt.hash(userDto.password, 12);
       const user = await this.userService.create({
@@ -71,6 +66,75 @@ export class AuthService {
       };
     };
   }
-}
 
+  async login(userDto: RegisterDto) {
+    const existingUser = await this.userService.findByEmail(userDto.email);
+    if (existingUser) {
+      const isPasswordCorrect = await bcrypt.compare(userDto.password, existingUser.password);
+      if (isPasswordCorrect) {
+        let role = existingUser.role;
+        let accessToken = this.jwtService.sign(
+          {
+            id: existingUser.id,
+            email: userDto.email,
+            role: role,
+          },
+          {
+            secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+            expiresIn: '15m',
+          },
+        );
+        let refreshToken = this.jwtService.sign(
+          {
+            id: existingUser.id,
+            email: userDto.email,
+            role: role,
+          },
+          {
+            secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+            expiresIn: '7d',
+          },
+        );
+        return {
+          user: {
+            id: existingUser.id,
+            email: userDto.email
+          },
+          accessToken,
+          refreshToken,
+        };
+      }
+      else {
+        throw new BadRequestException('Incorrect password');
+      }
+    }
+  }
+
+  async update(updateAuthDto: UpdateAuthDto) {
+    // Check if user exists
+    const existingUser = await this.userService.findByEmail(updateAuthDto.email);
+    if (existingUser) {
+      // Check if password is correct
+      const isPasswordCorrect = await bcrypt.compare(updateAuthDto.password, existingUser.password);
+      if (isPasswordCorrect) {
+        // Update password
+        const newPassword = await bcrypt.hash(updateAuthDto.newPassword, 12);
+        const updatedUser = await this.userService.update(existingUser.id, {
+          email: updateAuthDto.email,
+          password: newPassword,
+        });
+
+        return {
+          "id": existingUser.id,
+          "message": "User updated"
+        }
+      } else {
+        throw new BadRequestException('Incorrect password');
+      }
+    }
+    else {
+      throw new BadRequestException('Incorrect Credentials');
+    }
+  }
+}
 
