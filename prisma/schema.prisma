@@ -27,3 +27,13 @@ model User {
   role  Role    @default(USER)
   createdAt DateTime @default(now())
 }
+
+model Nonce {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  nonce      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
