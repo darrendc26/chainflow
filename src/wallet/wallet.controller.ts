@@ -25,6 +25,13 @@ export class WalletController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get()
+  async getWallet(@Req() req: AuthRequest) {
+    const user = req.user as any; // temporary cast
+    return this.walletService.getWallet(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('balance')
   async getBalance(@Req() req: AuthRequest) {
     const user = req.user as any; // temporary cast

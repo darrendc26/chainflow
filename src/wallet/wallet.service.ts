@@ -90,4 +90,16 @@ export class WalletService {
     return { balance: balance.toString() };
   }
 
+  async getWallet(userId: number) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { userId },
+    });
+
+    if (!wallet) {
+      throw new BadRequestException('Wallet not found');
+    }
+
+    return { address: wallet.address };
+  }
+
 }
