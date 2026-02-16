@@ -24,6 +24,10 @@ export class WalletController {
     return this.walletService.verifyWallet(user.id, body);
   }
 
-
-
+  @UseGuards(JwtAuthGuard)
+  @Post('balance')
+  async getBalance(@Req() req: AuthRequest) {
+    const user = req.user as any; // temporary cast
+    return this.walletService.getBalance(user.id);
+  }
 }

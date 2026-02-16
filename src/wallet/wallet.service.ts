@@ -5,6 +5,8 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { randomBytes, Verify } from 'crypto';
 import { ethers } from 'ethers';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { JsonRpcProvider } from "ethers";
+
 @Injectable()
 export class WalletService {
   constructor(
@@ -72,6 +74,20 @@ export class WalletService {
     });
 
     return { message: 'Wallet verified successfully' };
+  }
+
+  async getBalance(userId: number) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { userId },
+    });
+
+    if (!wallet) {
+      throw new BadRequestException('Wallet not found');
+    }
+    const provider = new JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
+
+    let balance = await provider.getBalance(wallet.address);
+    return { balance: balance.toString() };
   }
 
 }
