@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWalletDto } from './dto/create-wallet.dto';
+import { VerifyWalletDto } from './dto/verify-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { randomBytes } from 'crypto';
+import { randomBytes, Verify } from 'crypto';
+import { ethers } from 'ethers';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 @Injectable()
 export class WalletService {
   constructor(
@@ -27,9 +29,49 @@ export class WalletService {
     });
 
     return {
-      message: `Sign this message to verify your wallet ownership.\nNonce: ${nonce}`,
+      message: `Sign this message to verify your wallet ownership.Nonce: ${nonce}`,
     };
   }
 
+  async verifyWallet(userId: number, dto: VerifyWalletDto) {
+    const nonceRecord = await this.prisma.nonce.findUnique({
+      where: { userId },
+    });
+
+    if (!nonceRecord) {
+      throw new BadRequestException('No active nonce');
+    }
+
+    if (nonceRecord.expiresAt < new Date()) {
+      throw new BadRequestException('Nonce expired');
+    }
+
+    const message = `Sign this message to verify your wallet ownership.Nonce: ${nonceRecord.nonce}`;
+
+    const recovered = ethers.verifyMessage(message, dto.signature);
+
+    if (recovered.toLowerCase() !== dto.address.toLowerCase()) {
+      throw new UnauthorizedException('Invalid signature');
+    }
+
+    // store wallet
+    await this.prisma.wallet.upsert({
+      where: { userId },
+      update: {
+        address: dto.address,
+      },
+      create: {
+        userId,
+        address: dto.address,
+      },
+    });
+
+    // delete nonce
+    await this.prisma.nonce.delete({
+      where: { userId },
+    });
+
+    return { message: 'Wallet verified successfully' };
+  }
 
 }

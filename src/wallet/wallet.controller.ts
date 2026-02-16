@@ -1,6 +1,6 @@
 import { Controller, Req, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { WalletService } from './wallet.service';
-import { CreateWalletDto } from './dto/create-wallet.dto';
+import { VerifyWalletDto } from './dto/verify-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { randomBytes } from 'crypto';
@@ -16,4 +16,14 @@ export class WalletController {
     const user = req.user as any; // temporary cast
     return this.walletService.generateNonce(user.id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('verify')
+  async verifyWallet(@Body() body: VerifyWalletDto, @Req() req: AuthRequest) {
+    const user = req.user as any; // temporary cast
+    return this.walletService.verifyWallet(user.id, body);
+  }
+
+
+
 }

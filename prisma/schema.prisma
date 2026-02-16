@@ -37,3 +37,12 @@ model Nonce {
 
   @@index([userId])
 }
+
+model Wallet {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  address    String
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
