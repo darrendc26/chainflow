@@ -53,15 +53,15 @@ export class TransfersService {
     const txResponse = await provider.broadcastTransaction(dto.signature);
 
     const receipt = await txResponse.wait();
-    // const db = this.prisma.transfer.create({
-    //   data: {
-    //     userId,
-    //     from: tx.from,
-    //     to: tx.to,
-    //     amount: tx.value.toString(),
-    //     createdAt: new Date(),
-    //   },
-    // });
+    const db = this.prisma.transfer.create({
+      data: {
+        userId,
+        from: tx.from,
+        to: tx.to,
+        amount: tx.value.toString(),
+        createdAt: new Date(),
+      },
+    });
     return {
       txHash: receipt?.hash,
       gas: receipt?.gasUsed.toString(),
