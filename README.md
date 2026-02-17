@@ -195,30 +195,30 @@ All endpoints are documented using @nestjs/swagger.
 
 ## 🗃 Database Models
 ### User:
-id
-email
-password (hashed)
+- id
+- email
+- password (hashed)
 
 ### Wallet:
-id
-userId
-address
-createdAt
+- id
+- userId
+- address
+- createdAt
 
 ### Nonce:
-id
-userId
-nonce
-expiresAt
-createdAt
+- id
+- userId
+- nonce
+- expiresAt
+- createdAt
 
 ### Transfer:
-id
-userId
-from
-to
-amount
-createdAt
+- id
+- userId
+- from
+- to
+- amount
+- createdAt
 
 ## 🚀 Getting Started
 1️⃣ Clone
