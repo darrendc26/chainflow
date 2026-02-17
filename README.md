@@ -37,14 +37,17 @@ Backend waits for receipt & stores result
 Private keys never touch the backend.
 
 ## 🛠 Tech Stack
-Layer	Technology
-Framework	NestJS
-Language	TypeScript
-Blockchain	ethers.js v6
-Database	Prisma ORM
-Auth	JWT (Passport)
-Docs	Swagger
-Network	Ethereum / Sepolia
+
+| Layer       | Technology          |
+|------------|--------------------|
+| Framework  | NestJS             |
+| Language   | TypeScript         |
+| Blockchain | ethers.js v6       |
+| Database   | Prisma ORM         |
+| Auth       | JWT (Passport)     |
+| Docs       | Swagger            |
+| Network    | Ethereum / Sepolia |
+
 
 ## 🔐 Authentication
 Chainflow uses JWT-based authentication.
@@ -181,7 +184,7 @@ Response:
 }
 ```
 
-##📘 Swagger Documentation
+## 📘 Swagger Documentation
 
 Swagger UI available at:
 
