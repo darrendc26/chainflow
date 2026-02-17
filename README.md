@@ -264,9 +264,9 @@ http://localhost:3000/api
 
 ## 🔒 Security Features
 
-JWT authentication guard
-Wallet ownership validation via signature recovery
-Nonce verification
-ChainId enforcement
-EIP-1559 fee support
-BigInt-safe handling of blockchain values
+- JWT authentication guard  
+- Wallet ownership validation via signature recovery  
+- Nonce verification to prevent replay attacks  
+- ChainId enforcement to avoid cross-network misuse  
+- EIP-1559 fee support  
+- BigInt-safe handling of blockchain values  
