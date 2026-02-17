@@ -235,11 +235,17 @@ npm install
 3️⃣ Setup Environment
 Create .env:
 
+#### Database
 DATABASE_URL="file:./dev.db"
+
+#### Auth
 JWT_ACCESS_TOKEN_SECRET="your_access_token_secret"
 JWT_REFRESH_TOKEN_SECRET="your_refresh_token_secret"
+
+#### Blockchain
 SEPOLIA_RPC_URL="your_rpc_url"
 PRIVATE_KEY="optional_for_testing"
+
 
 4️⃣ Run Prisma
 ```bash
