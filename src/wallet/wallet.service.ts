@@ -85,7 +85,11 @@ export class WalletService {
       throw new BadRequestException('Wallet not found');
     }
     const provider = new JsonRpcProvider(process.env.SEPOLIA_RPC_URL);
-
+    console.log(provider.estimateGas({
+      from: wallet.address,
+      to: wallet.address,
+      value: "0.01",
+    }));
     let balance = await provider.getBalance(wallet.address);
     return { balance: balance.toString() };
   }

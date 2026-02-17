@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 // import { JwtModule } from '@nestjs/jwt';
 // import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(
@@ -54,15 +54,28 @@ export class UserService {
     return id;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  // findOne(id: number) {
+  //   return `This action returns a #${id} user`;
+  // }
+
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    let password = updateUserDto.password;
+    if (!password) {
+      return {
+        "message": "Password is required"
+      }
+    }
+    let hashedPassword = await bcrypt.hash(password, 12);
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        email: updateUserDto.email,
+        password: hashedPassword,
+      },
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} user`;
+  // }
 }

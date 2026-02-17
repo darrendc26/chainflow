@@ -46,3 +46,14 @@ model Wallet {
 
   @@index([userId])
 }
+
+model Transfer {
+  id         Int      @id @default(autoincrement())
+  userId     Int      
+  from       String
+  to         String
+  amount     String
+  createdAt  DateTime @default(now())
+  
+  @@index([userId])
+}
