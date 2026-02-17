@@ -1,4 +1,4 @@
-🚀 Chainflow
+# 🚀 Chainflow
 
 Chainflow is a production-style Web3 backend built with NestJS, Prisma, and Ethers.js.
 
@@ -18,7 +18,7 @@ It implements:
 
 This project demonstrates real-world backend architecture for Web3 applications.
 
-🏗 Architecture Overview
+## 🏗 Architecture Overview
 
 Chainflow follows a secure non-custodial pattern:
 
@@ -36,7 +36,7 @@ Backend waits for receipt & stores result
 
 Private keys never touch the backend.
 
-🛠 Tech Stack
+## 🛠 Tech Stack
 Layer	Technology
 Framework	NestJS
 Language	TypeScript
@@ -46,29 +46,31 @@ Auth	JWT (Passport)
 Docs	Swagger
 Network	Ethereum / Sepolia
 
-🔐 Authentication
+## 🔐 Authentication
 Chainflow uses JWT-based authentication.
 
+## API Endpoints
 Register
 POST /auth/register
 
 Body:
-
+```json
 {
   "email": "user@example.com",
   "password": "strongpassword"
 }
+```
 
 Login
 POST /auth/login
 
 
 Returns:
-
+```json
 {
   "access_token": "jwt_token_here"
 }
-
+```
 
 Use JWT in headers:
 
@@ -79,41 +81,46 @@ Authorization: Bearer <token>
 Generate Nonce
 GET /wallet/nonce
 Returns:
-
+```json
 {
   "message": "Sign this message to verify your wallet ownership.Nonce: 5e27809bc546799e53681ab84fcc6ab1"
 }
+```
 
 Verify Wallet
 GET /wallet/verify
 Body:
-
+```json
 {
   "address": "0x...",
   "signature": "0x..."
 }
+```
 
 Response:
-
+```json
 {
   "message": "Wallet verified successfully"
 }
+```
 
 Get Wallet
 GET /wallet
 Returns:
-
+```json
 {
   "address": "0x..."
 }
+```
 
 Get Balance
 GET /wallet/balance
 Returns:
-
+```json
 {
   "balance": "1000000000000000000"
 }
+```
 
 Associates wallet with authenticated user.
 
@@ -122,34 +129,34 @@ Associates wallet with authenticated user.
 POST /transfer/estimate
 
 Body:
-
+```json
 {
   "from": "0x...",
   "to": "0x...",
   "amount": "100000000000000000"
 }
-
+```
 
 Response:
+```json
 {
     "gas": "21000",
     "amount": "100000000000000000",
     "total" : "100000000000021000"
 }
-
+```
 
 User signs using these parameters on frontend.
 
 2️⃣ Execute Signed Transaction
 POST /transfer/transfer
 
-
 Body:
-
+```json
 {
   "signature": "0x..."
 }
-
+```
 
 Backend:
 
@@ -164,7 +171,7 @@ Waits for receipt
 Stores transaction in DB
 
 Response:
-
+```json
 {
   "txHash": "...",
   "gas": "...",
@@ -172,8 +179,9 @@ Response:
   "blockNumber": "...",
   "status": "success"
 }
+```
 
-📘 Swagger Documentation
+##📘 Swagger Documentation
 
 Swagger UI available at:
 
@@ -182,26 +190,26 @@ http://localhost:3000/api
 
 All endpoints are documented using @nestjs/swagger.
 
-🗃 Database Models
-User:
+## 🗃 Database Models
+### User:
 id
 email
 password (hashed)
 
-Wallet:
+### Wallet:
 id
 userId
 address
 createdAt
 
-Nonce:
+### Nonce:
 id
 userId
 nonce
 expiresAt
 createdAt
 
-Transfer:
+### Transfer:
 id
 userId
 from
@@ -209,7 +217,7 @@ to
 amount
 createdAt
 
-🚀 Getting Started
+## 🚀 Getting Started
 1️⃣ Clone
 ```bash
 git clone https://github.com/darrendc26/chainflow.git
@@ -222,7 +230,6 @@ npm install
 ```
 
 3️⃣ Setup Environment
-
 Create .env:
 
 DATABASE_URL="file:./dev.db"
@@ -246,7 +253,7 @@ Swagger available at:
 http://localhost:3000/api
 
 
-🔒 Security Features
+## 🔒 Security Features
 
 JWT authentication guard
 Wallet ownership validation via signature recovery
